@@ -1,0 +1,5 @@
+# Utiliza a imagem oficial do ActiveMQ
+FROM symptoma/activemq:latest
+
+# Configura o ActiveMQ para ser inicializado
+CMD ["run.sh"]

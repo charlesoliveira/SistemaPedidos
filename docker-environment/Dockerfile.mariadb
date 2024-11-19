@@ -1,0 +1,5 @@
+# Utiliza a imagem oficial do MariaDB
+FROM mariadb:10.5
+
+# Utiliza a configuração padrão para iniciar o MariaDB
+CMD ["mysqld"]

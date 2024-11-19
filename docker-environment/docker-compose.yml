@@ -1,0 +1,41 @@
+version: '3.8'
+
+
+networks:
+  my_network:
+    driver: bridge
+
+volumes:
+  db_data:
+
+services:
+  mariadb:
+    build:
+      context: .
+      dockerfile: Dockerfile.mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: db_orders
+      MYSQL_USER: user
+      MYSQL_PASSWORD: 123
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - my_network
+
+  activemq:
+    environment:
+      ACTIVEMQ_USER: admin
+      ACTIVEMQ_PASSWORD: admin
+      ACTIVEMQ_WEBADMIN_USERNAME: root
+      ACTIVEMQ_WEBADMIN_PASSWORD: root
+    build:
+      context: .
+      dockerfile: Dockerfile.activemq
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+    networks:
+      - my_network
