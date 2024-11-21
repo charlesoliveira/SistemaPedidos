@@ -2,6 +2,7 @@ package com.example.sistemapedidos.routes.orders;
 
 import com.example.sistemapedidos.domain.entities.OrderItens;
 import com.example.sistemapedidos.domain.entities.orders.Orders;
+import com.example.sistemapedidos.domain.repositories.IOrdersRepository;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,10 @@ import static org.apache.camel.LoggingLevel.INFO;
 @Component
 public class OrdersEntityRoute extends RouteBuilder {
 
-    protected static final String RETRIVE_ORDERID = "SELECT tb_orders.id FROM tb_orders WHERE tb_orders.code = '${exchangeProperty.ORDER_CODE}';";
+    @Autowired
+    private IOrdersRepository ordersRepository;
+
+    protected static final String RETRIVE_ORDERID = "SELECT tb_orders.id FROM tb_orders WHERE code = '${exchangeProperty.ORDER_CODE}';";
 
     protected static final String RETRIVE_VALUES = "SELECT tb_products.price FROM tb_products WHERE ean ='${body.ean}';";
 
@@ -38,7 +42,7 @@ public class OrdersEntityRoute extends RouteBuilder {
                     exchange.getIn().setBody(orders);
                 })
                 .log("${body}")
-                .to("jpa:com.example.sistemapedidos.domain.repositories.IOrdersRepository.saveAll()")
+                .to("jpa:com.example.sistemapedidos.domain.repositories.ordersRepository.saveAll()")
                 .log("${body}")
 
                 .setProperty("ORDER_CODE", simple("${body.code}"))
@@ -63,7 +67,12 @@ public class OrdersEntityRoute extends RouteBuilder {
                 .log("${body}")
                 .end()
 
-        ;
+                .to("jpa:com.example.sistemapedidos.domain.repositories.IordersRepository.findByCode(${exchangeProperty.ORDER_CODE})")
+                .setProperty("message", simple("${body}"))
+                .setBody(simple("${exchangeProperty.message}"))
+                .log(INFO, "${body}")
+                .marshal().json(JsonLibrary.Jackson)
+        .to("activemq:queue.com.example.SistemaB.integration");
     }
 
     class CalculaTotalBean {
