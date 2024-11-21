@@ -2,8 +2,9 @@ package com.example.sistemapedidos.controllers;
 
 import com.example.sistemapedidos.domain.entities.Clients;
 import com.example.sistemapedidos.domain.entities.OrderItens;
-import com.example.sistemapedidos.domain.entities.Orders;
+import com.example.sistemapedidos.domain.entities.orders.Orders;
 import com.example.sistemapedidos.domain.entities.Products;
+import com.example.sistemapedidos.domain.entities.orders.converter.OrdersConverter;
 import com.example.sistemapedidos.domain.repositories.IClientsRepository;
 import com.example.sistemapedidos.domain.repositories.IOrderItensRepository;
 import com.example.sistemapedidos.domain.repositories.IOrdersRepository;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +29,9 @@ public class OrdersController {
 
     @Autowired
     private IOrdersRepository ordersRepository;
+
+    @Autowired
+    private OrdersConverter ordersConverter;
 
     @Autowired
     private IOrderItensRepository orderItensRepository;
@@ -59,5 +65,11 @@ public class OrdersController {
     public ResponseEntity<List<Products>> buscarListagemProducts() {
         List<Products> output = productsRepository.findAll();
         return new ResponseEntity<>(output, HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/orders",  consumes = {"application/json"})
+    public ResponseEntity<Orders> adicionarOrder(@RequestBody Orders order) {
+        Orders output = ordersRepository.save(order);
+        return new ResponseEntity<>(output, HttpStatus.CREATED);
     }
 }
