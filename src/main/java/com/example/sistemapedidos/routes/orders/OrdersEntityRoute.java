@@ -22,7 +22,7 @@ public class OrdersEntityRoute extends RouteBuilder {
 
     protected static final String RETRIVE_VALUES = "SELECT tb_products.price FROM tb_products WHERE ean ='${body.ean}';";
 
-    protected static final String UPDATE_SUBTOTAL = "UPDATE tb_orders SET subtotal = '${body}' WHERE code = '${exchangeProperty.ORDER_CODE}';";
+    protected static final String UPDATE_SUBTOTAL = "UPDATE tb_orders SET subtotal = '${body}', orderStatus = 'VALUED' WHERE code = '${exchangeProperty.ORDER_CODE}';";
 
 
     @Autowired
